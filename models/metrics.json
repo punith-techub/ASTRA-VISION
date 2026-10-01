@@ -1,0 +1,158 @@
+{
+  "dataset": {
+    "total_images": 258,
+    "train_images": 206,
+    "val_images": 52,
+    "classes": [
+      "aircraft",
+      "helicopter",
+      "drone",
+      "military-vehicle",
+      "naval"
+    ],
+    "display_names": {
+      "aircraft": "Aircraft",
+      "helicopter": "Helicopter",
+      "drone": "Drone / UAV",
+      "military-vehicle": "Military Vehicle",
+      "naval": "Naval Vessel"
+    }
+  },
+  "ensemble_model": {
+    "name": "Ensemble (MobileNetV3-Small Fine-Tuned + CLIP ViT-B/32 Zero-Shot)",
+    "accuracy": 90.38,
+    "macro_f1": 0.9044,
+    "weighted_f1": 0.9028,
+    "macro_precision": 0.9051,
+    "macro_recall": 0.9055,
+    "macro_roc_auc": 0.9898,
+    "micro_roc_auc": 0.9913,
+    "per_class": {
+      "aircraft": {
+        "precision": 0.8889,
+        "recall": 0.8,
+        "f1_score": 0.8421,
+        "support": 10.0,
+        "roc_auc": 0.9976
+      },
+      "helicopter": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "support": 10.0,
+        "roc_auc": 1.0
+      },
+      "drone": {
+        "precision": 0.8182,
+        "recall": 0.8182,
+        "f1_score": 0.8182,
+        "support": 11.0,
+        "roc_auc": 0.9667
+      },
+      "military-vehicle": {
+        "precision": 0.9091,
+        "recall": 1.0,
+        "f1_score": 0.9524,
+        "support": 10.0,
+        "roc_auc": 1.0
+      },
+      "naval": {
+        "precision": 0.9091,
+        "recall": 0.9091,
+        "f1_score": 0.9091,
+        "support": 11.0,
+        "roc_auc": 0.9845
+      }
+    }
+  },
+  "fine_tuned_mobilenet": {
+    "name": "MobileNetV3-Small (Fine-Tuned)",
+    "accuracy": 82.69,
+    "macro_f1": 0.817,
+    "weighted_f1": 0.8141,
+    "macro_roc_auc": 0.9668,
+    "micro_roc_auc": 0.9568,
+    "per_class": {
+      "aircraft": {
+        "precision": 0.9,
+        "recall": 0.9,
+        "f1_score": 0.9,
+        "support": 10.0,
+        "roc_auc": 0.9524
+      },
+      "helicopter": {
+        "precision": 0.7143,
+        "recall": 1.0,
+        "f1_score": 0.8333,
+        "support": 10.0,
+        "roc_auc": 0.9952
+      },
+      "drone": {
+        "precision": 1.0,
+        "recall": 0.4545,
+        "f1_score": 0.625,
+        "support": 11.0,
+        "roc_auc": 0.9313
+      },
+      "military-vehicle": {
+        "precision": 0.7692,
+        "recall": 1.0,
+        "f1_score": 0.8696,
+        "support": 10.0,
+        "roc_auc": 0.9929
+      },
+      "naval": {
+        "precision": 0.9,
+        "recall": 0.8182,
+        "f1_score": 0.8571,
+        "support": 11.0,
+        "roc_auc": 0.9623
+      }
+    }
+  },
+  "clip_zero_shot": {
+    "name": "OpenAI CLIP ViT-B/32 (Prompt-Ensembled Zero-Shot)",
+    "accuracy": 88.46,
+    "macro_f1": 0.8864,
+    "weighted_f1": 0.8845,
+    "macro_roc_auc": 0.9795,
+    "micro_roc_auc": 0.9814,
+    "per_class": {
+      "aircraft": {
+        "precision": 0.9,
+        "recall": 0.9,
+        "f1_score": 0.9,
+        "support": 10.0,
+        "roc_auc": 0.9833
+      },
+      "helicopter": {
+        "precision": 1.0,
+        "recall": 0.9,
+        "f1_score": 0.9474,
+        "support": 10.0,
+        "roc_auc": 0.9786
+      },
+      "drone": {
+        "precision": 0.8182,
+        "recall": 0.8182,
+        "f1_score": 0.8182,
+        "support": 11.0,
+        "roc_auc": 0.9557
+      },
+      "military-vehicle": {
+        "precision": 0.8333,
+        "recall": 1.0,
+        "f1_score": 0.9091,
+        "support": 10.0,
+        "roc_auc": 1.0
+      },
+      "naval": {
+        "precision": 0.9,
+        "recall": 0.8182,
+        "f1_score": 0.8571,
+        "support": 11.0,
+        "roc_auc": 0.98
+      }
+    }
+  }
+}

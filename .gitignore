@@ -1,0 +1,30 @@
+# Python virtual environment & cache
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Environment files & secrets (CRITICAL - NEVER COMMIT)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+
+# Build logs & outputs
+*.log
+pip-install.*.log
+
+# Model weights & training artifacts (large binaries)
+models/*.pt
+models/*.json
+!models/metrics.json
+
+# Data & uploads
+data/external/
+data/manifests/
+static/uploads/
+
+# Root test & debug scratch images
+/*.png

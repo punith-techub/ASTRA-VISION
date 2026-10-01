@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ASTRA VISION 5.0 — Self-Learning AI Object Recognition</title>
+    <link rel="stylesheet" href="/static/styles.css?v=5.0.3" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="masthead">
+        <div class="brand">
+          <p class="eyebrow">SMART OBJECT AI &middot; AUTO-LEARNING</p>
+          <h1>ASTRA <span>VISION</span> <small class="version-tag">5.0</small></h1>
+          <p class="subtitle">AI visual search that learns from mistakes and improves with every image.</p>
+        </div>
+        <div class="header-actions">
+          <button id="catalog-btn" class="ghost-btn" type="button">📚 Platform Library</button>
+          <button id="metrics-btn" class="ghost-btn" type="button">📊 Model Accuracy</button>
+          <button id="gallery-btn" class="ghost-btn" type="button">🖼️ Scan Gallery (<span id="gallery-count">0</span>)</button>
+          <button id="batch-btn" class="ghost-btn" type="button">📦 Batch Scan</button>
+          <div class="omni-status-badge" title="ASTRA v5.0: Local Model First + Cloud Verification + Severe Punishment & Self-Training">
+            <span class="omni-pulse-dot"></span>
+            <span class="omni-badge-text">⚡ V5 SELF-LEARNING ACTIVE</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Upload Hero with Plus Button & Drag-and-Drop (Fits 100% in viewport without scrolling) -->
+      <section id="drop-zone" class="drop-zone" aria-label="Image upload area">
+        <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+        <div class="plus-circle" id="plus-icon" title="Click to upload image">+</div>
+        <h2>Drop any photo here</h2>
+        <p>or click the plus button to select a JPG, PNG, or WebP (up to 10 MB)</p>
+        <button id="browse-button" type="button" class="primary-btn">Select Image</button>
+
+        <div class="platform-chips">
+          <span class="chip">✈️ Planes &amp; Jets</span>
+          <span class="chip">🚗 Cars &amp; Trucks</span>
+          <span class="chip">🚢 Ships &amp; Boats</span>
+          <span class="chip">🚁 Helicopters &amp; Drones</span>
+          <span class="chip">📦 Tools &amp; Gadgets</span>
+          <span class="chip">🌍 Buildings &amp; More</span>
+        </div>
+
+        <div class="engine-status-pill">
+          <span class="status-dot"></span>
+          <span>Local Model First &middot; Cloud Checked &middot; Auto-Learning</span>
+        </div>
+      </section>
+
+      <!-- Mobile Tab Bar (Active only on small screens for unscrollable view) -->
+      <div id="mobile-tabs-bar" class="mobile-tabs-bar hidden">
+        <button id="tab-btn-photo" class="mobile-tab-btn active" type="button">📷 Photo &amp; Focus</button>
+        <button id="tab-btn-verdict" class="mobile-tab-btn" type="button">🧠 Verdict &amp; Answer</button>
+        <button id="tab-btn-specs" class="mobile-tab-btn" type="button">📋 Details &amp; Specs</button>
+      </div>
+
+      <!-- Results View (Self-contained, unscrollable page, clean contained panels) -->
+      <section id="result" class="result hidden" aria-live="polite">
+        <!-- Visual Column: Image + Verification & Punishment Card -->
+        <div class="preview-column" id="preview-col">
+          <div class="image-wrapper">
+            <img id="annotated-image" alt="Detected targets" />
+            <img id="preview" class="hidden" alt="Uploaded photo" />
+            <img id="heatmap" class="hidden" alt="AI focus heatmap" />
+            <div class="hud-reticle">
+              <span class="reticle-corner top-left"></span>
+              <span class="reticle-corner top-right"></span>
+              <span class="reticle-corner bottom-left"></span>
+              <span class="reticle-corner bottom-right"></span>
+              <span class="hud-status" id="hud-status">OBJECT FOUND</span>
+            </div>
+          </div>
+          <div class="view-toggles" id="toggle-container">
+            <button id="view-annotated" class="toggle-btn active" type="button">🎯 Detected Targets</button>
+            <button id="view-orig" class="toggle-btn" type="button">📷 Original Photo</button>
+            <button id="view-cam" class="toggle-btn" type="button">🔥 AI Focus</button>
+          </div>
+
+          <!-- Close-Up Optical Zoom Box -->
+          <div id="optical-zoom-box" class="optical-zoom-box hidden">
+            <div class="zoom-box-header">
+              <span class="zoom-tag">🔍 TARGET ZOOM</span>
+              <span id="zoom-factor-badge" class="zoom-factor-badge">Close-Up</span>
+            </div>
+            <div class="zoom-content-row">
+              <img id="zoom-crop-img" class="zoom-crop-img" alt="Zoomed target" />
+              <div class="zoom-meta-col">
+                <strong id="zoom-target-title">Target Close-Up</strong>
+                <p id="zoom-target-desc" class="zoom-target-desc">Enhanced view of the detected object.</p>
+                <div class="zoom-coords" id="zoom-coords">Box Area: [0, 0, 0, 0]</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NEW VERSION 5 FEATURE: Verification & Severe Punishment / Reward Card -->
+          <div id="verification-card" class="verification-card">
+            <div class="verification-header">
+              <div class="verification-title-left">
+                <span class="omni-pulse-dot mini-pulse"></span>
+                <span class="verification-step-tag">1. LOCAL MODEL &rarr; 2. CLOUD AI CHECK</span>
+              </div>
+              <span id="verdict-pill" class="verdict-pill correct">VERIFIED</span>
+            </div>
+
+            <div class="verification-comparison">
+              <div class="comp-box local-box">
+                <span class="comp-label">1. Local Model Guessed</span>
+                <strong id="comp-local-name">—</strong>
+                <span id="comp-local-meta" class="comp-sub">—</span>
+              </div>
+              <div class="comp-arrow">&rarr;</div>
+              <div class="comp-box cloud-box">
+                <span class="comp-label">2. Cloud AI Checked</span>
+                <strong id="comp-cloud-name">—</strong>
+                <span id="comp-cloud-meta" class="comp-sub">—</span>
+              </div>
+            </div>
+
+            <!-- Severe Punishment Alert (shown when local predicts wrong) -->
+            <div id="punishment-alert" class="punishment-alert hidden">
+              <div class="punishment-title-row">
+                <span class="punishment-icon">⚡</span>
+                <strong id="punishment-title">SEVERE PUNISHMENT APPLIED (-50 Points)</strong>
+              </div>
+              <p id="punishment-desc">The local model was wrong. We gave it severe punishment, updated its neural weights, and memorized the correct image so it gets this right next time!</p>
+              <div class="retrain-stats-row">
+                <span>Loss Penalty: <strong id="retrain-loss-diff">—</strong></span>
+                <span>Learned Memory: <strong id="retrain-mem-count">—</strong></span>
+              </div>
+            </div>
+
+            <!-- Reward Alert (shown when local predicts correct) -->
+            <div id="reward-alert" class="reward-alert hidden">
+              <div class="reward-title-row">
+                <span class="reward-icon">✅</span>
+                <strong>LOCAL MODEL CORRECT! (+10 Reward)</strong>
+              </div>
+              <p id="reward-desc">Verified by Cloud AI. Model accuracy reinforced.</p>
+            </div>
+          </div>
+
+          <!-- Category Quick Badge -->
+          <div class="preview-meta">
+            <div class="category-meta-box">
+              <span class="meta-label">Category</span>
+              <strong id="category-badge">—</strong>
+              <span class="meta-sub" id="category-conf">—</span>
+            </div>
+            <div class="engine-meta-box">
+              <span class="meta-label">Active Engine</span>
+              <span id="model-tag" class="model-tag-text">Local Model</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Details Column (Contained scroll strictly within this panel, page never scrolls) -->
+        <div class="result-copy" id="result-col">
+          <!-- Multi-Target Banner & Switcher Tabs -->
+          <div id="multi-target-banner" class="multi-target-banner hidden">
+            <div class="target-banner-left">
+              <span class="omni-pulse-dot mini-pulse"></span>
+              <span class="target-banner-title">TARGETS IN PHOTO</span>
+              <span class="target-count-badge" id="target-count-badge">2 Objects Found</span>
+            </div>
+            <span class="target-active-indicator" id="target-active-indicator">Target #1 Active</span>
+          </div>
+          <div id="target-tabs-container" class="target-tabs-row hidden"></div>
+
+          <div class="dossier-header">
+            <div class="dossier-title-row">
+              <div>
+                <span class="dossier-classification">DETECTION RESULT</span>
+                <h2 id="platform-name">—</h2>
+                <div class="platform-sub-row">
+                  <span id="platform-designation" class="designation-badge">—</span>
+                  <span id="platform-variant" class="variant-text">—</span>
+                </div>
+              </div>
+              <div class="platform-match-score">
+                <span class="match-label">Confidence</span>
+                <strong id="platform-confidence">—</strong>
+              </div>
+            </div>
+            <p id="platform-role" class="platform-role-banner">—</p>
+            <!-- Low-Confidence / Uncertain Prediction Warning Banner -->
+            <div id="uncertain-warning" class="uncertain-banner hidden" role="status">
+              <span class="uncertain-icon">⚠️</span>
+              <div class="uncertain-text-group">
+                <strong id="uncertain-title">Uncertain Prediction (Low Confidence)</strong>
+                <p id="uncertain-desc">Decision margin is below confident threshold. The object may exhibit unusual angles, partial occlusion, or complex background.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Check & Consensus Matrix -->
+          <div class="consensus-matrix" id="consensus-matrix">
+            <div class="consensus-title-row">
+              <div class="consensus-title-left">
+                <span class="omni-pulse-dot mini-pulse"></span>
+                <span class="consensus-title-tag">AI VERIFICATION &amp; CONSENSUS</span>
+              </div>
+              <span class="consensus-latency" id="consensus-latency">—</span>
+            </div>
+            <div class="consensus-grid">
+              <div class="consensus-node" id="node-gemini">
+                <div class="node-status-dot online"></div>
+                <div class="node-info">
+                  <span class="node-name">Gemini Flash</span>
+                  <strong class="node-detail" id="node-gemini-detail">Checked</strong>
+                </div>
+              </div>
+              <div class="consensus-node" id="node-openrouter">
+                <div class="node-status-dot online"></div>
+                <div class="node-info">
+                  <span class="node-name">OpenRouter</span>
+                  <strong class="node-detail" id="node-openrouter-detail">Checked</strong>
+                </div>
+              </div>
+              <div class="consensus-node" id="node-groq">
+                <div class="node-status-dot online"></div>
+                <div class="node-info">
+                  <span class="node-name">Groq LPU</span>
+                  <strong class="node-detail" id="node-groq-detail">Verified</strong>
+                </div>
+              </div>
+              <div class="consensus-node" id="node-neural">
+                <div class="node-status-dot online"></div>
+                <div class="node-info">
+                  <span class="node-name">Local Model</span>
+                  <strong class="node-detail" id="node-neural-detail">Answered First</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 Core KPI Badges -->
+          <div class="intel-kpi-grid">
+            <div class="intel-kpi-card">
+              <span class="kpi-icon">🌍</span>
+              <span class="kpi-label">Country</span>
+              <strong class="kpi-val" id="kpi-country">—</strong>
+              <span class="kpi-sub" id="kpi-manufacturer">—</span>
+            </div>
+            <div class="intel-kpi-card">
+              <span class="kpi-icon">📅</span>
+              <span class="kpi-label">Year Built</span>
+              <strong class="kpi-val" id="kpi-year">—</strong>
+              <span class="kpi-sub">First Introduced</span>
+            </div>
+            <div class="intel-kpi-card">
+              <span class="kpi-icon">🏭</span>
+              <span class="kpi-label">Total Built</span>
+              <strong class="kpi-val" id="kpi-built">—</strong>
+              <span class="kpi-sub">Units Produced</span>
+            </div>
+            <div class="intel-kpi-card highlight-card">
+              <span class="kpi-icon">⚔️</span>
+              <span class="kpi-label">In Service</span>
+              <strong class="kpi-val highlight" id="kpi-operational">—</strong>
+              <span class="kpi-sub" id="kpi-status">Service Status</span>
+            </div>
+          </div>
+
+          <!-- AI Observations -->
+          <div id="tactical-analysis-box" class="tactical-analysis-box hidden">
+            <span class="recon-label">🔍 AI OBSERVATIONS</span>
+            <p id="tactical-analysis-text"></p>
+          </div>
+
+          <!-- Details & Specifications Section -->
+          <div class="specs-section">
+            <h3 class="section-title">Details &amp; Specifications</h3>
+            <div class="specs-grid">
+              <div class="spec-card">
+                <span class="spec-label">⚡ Top Speed</span>
+                <p id="spec-speed" class="spec-val">—</p>
+              </div>
+              <div class="spec-card">
+                <span class="spec-label">🎯 Range / Size</span>
+                <p id="spec-range" class="spec-val">—</p>
+              </div>
+              <div class="spec-card full-width">
+                <span class="spec-label">📦 Equipment / Payload</span>
+                <p id="spec-armament" class="spec-val">—</p>
+              </div>
+              <div class="spec-card full-width">
+                <span class="spec-label">📡 Tech &amp; Sensors</span>
+                <p id="spec-avionics" class="spec-val">—</p>
+              </div>
+              <div class="spec-card full-width">
+                <span class="spec-label">🔍 Visual Features</span>
+                <p id="spec-signatures" class="spec-val signatures-text">—</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Other Likely Matches -->
+          <div class="rankings">
+            <h3 class="section-title">Other Likely Matches</h3>
+            <div id="runner-ups-list" class="runner-ups-list"></div>
+          </div>
+
+          <!-- All Detected Objects in Frame -->
+          <div id="all-targets-section" class="all-targets-section hidden">
+            <div class="all-targets-header">
+              <div class="all-targets-header-left">
+                <span class="hud-radar-icon">🎯</span>
+                <div>
+                  <h3 class="all-targets-title">ALL DETECTED OBJECTS (<span id="all-targets-count">0</span>)</h3>
+                  <p class="all-targets-sub">Objects found in this image</p>
+                </div>
+              </div>
+              <span class="formation-tag" id="formation-tag">⚡ Multiple Objects</span>
+            </div>
+            <div class="all-targets-grid" id="all-targets-grid"></div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="actions">
+            <button id="try-again" type="button" class="primary-btn">Scan Another Photo</button>
+            <button id="browse-full-catalog-btn" type="button" class="ghost-btn">Open Library (68+)</button>
+          </div>
+        </div>
+      </section>
+
+      <p id="error" class="error-banner hidden" role="alert"></p>
+
+      <!-- Platform Library Modal -->
+      <div id="catalog-modal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-content large-modal">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">KNOWLEDGE BASE</p>
+              <h2>Platform Library (68+ Items)</h2>
+              <p class="modal-sub">Browse vehicles, aircraft, and platforms saved in the knowledge base</p>
+            </div>
+            <button id="catalog-modal-close" class="close-btn" type="button">&times;</button>
+          </div>
+
+          <div class="catalog-controls">
+            <input id="catalog-search" type="search" placeholder="Search by name, code, or country (e.g. F-22, Su-57, Abrams, Apache)..." class="catalog-search-input" />
+            <div class="category-tabs" id="catalog-category-tabs">
+              <button class="cat-tab active" data-cat="all" type="button">All Items</button>
+              <button class="cat-tab" data-cat="aircraft" type="button">✈️ Planes</button>
+              <button class="cat-tab" data-cat="helicopter" type="button">🚁 Helicopters</button>
+              <button class="cat-tab" data-cat="drone" type="button">🛰️ Drones</button>
+              <button class="cat-tab" data-cat="military-vehicle" type="button">🛡️ Vehicles</button>
+              <button class="cat-tab" data-cat="naval" type="button">⚓ Ships</button>
+            </div>
+          </div>
+
+          <div class="catalog-grid" id="catalog-grid"></div>
+        </div>
+      </div>
+
+      <!-- Model Performance Modal -->
+      <div id="metrics-modal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">MODEL ACCURACY</p>
+              <h2>Accuracy &amp; Performance</h2>
+            </div>
+            <button id="modal-close" class="close-btn" type="button">&times;</button>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <span class="metric-title">Accuracy</span>
+              <strong class="metric-value highlight" id="metric-acc">90.38%</strong>
+              <span class="metric-sub">Test test set</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-title">F1-Score</span>
+              <strong class="metric-value" id="metric-f1">0.9044</strong>
+              <span class="metric-sub">Harmonic mean</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-title">ROC-AUC</span>
+              <strong class="metric-value highlight" id="metric-auc">0.9898</strong>
+              <span class="metric-sub">Score</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-title">Saved Items</span>
+              <strong class="metric-value" id="metric-platforms">68 Platforms</strong>
+              <span class="metric-sub">In Library</span>
+            </div>
+          </div>
+
+          <div class="charts-row">
+            <div class="chart-container">
+              <h3>ROC Curves</h3>
+              <img src="/api/metrics/roc-curve" alt="ROC Curve" class="metric-img" />
+            </div>
+            <div class="chart-container">
+              <h3>Confusion Matrix</h3>
+              <img src="/api/metrics/confusion-matrix" alt="Confusion Matrix" class="metric-img" />
+            </div>
+          </div>
+
+          <div class="table-container">
+            <h3>Per-Category Results</h3>
+            <table class="metrics-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Precision</th>
+                  <th>Recall</th>
+                  <th>F1-Score</th>
+                  <th>ROC-AUC</th>
+                </tr>
+              </thead>
+              <tbody id="per-class-tbody">
+                <tr><td>Fighter Planes</td><td>88.9%</td><td>80.0%</td><td>84.2%</td><td>0.998</td></tr>
+                <tr><td>Helicopters</td><td>100.0%</td><td>100.0%</td><td>100.0%</td><td>1.000</td></tr>
+                <tr><td>Drones / UAVs</td><td>81.8%</td><td>81.8%</td><td>81.8%</td><td>0.967</td></tr>
+                <tr><td>Ground Vehicles</td><td>90.9%</td><td>100.0%</td><td>95.2%</td><td>1.000</td></tr>
+                <tr><td>Naval Ships</td><td>90.9%</td><td>90.9%</td><td>90.9%</td><td>0.985</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image History & Scan Gallery Modal -->
+      <div id="gallery-modal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-content large-modal">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">SAVED SCANS</p>
+              <h2>Image History &amp; Gallery (<span id="gallery-modal-count">0</span>)</h2>
+              <p class="modal-sub">Historical scans stored in local memory. Click any thumbnail to re-inspect its full intelligence dossier.</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button id="clear-gallery-btn" class="ghost-btn" type="button" style="font-size: 0.76rem; padding: 4px 10px;">🗑️ Clear Gallery</button>
+              <button id="gallery-modal-close" class="close-btn" type="button">&times;</button>
+            </div>
+          </div>
+          <div class="catalog-grid" id="gallery-grid"></div>
+        </div>
+      </div>
+
+      <!-- Batch Image Processing Modal -->
+      <div id="batch-modal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-content large-modal">
+          <div class="modal-header">
+            <div>
+              <p class="eyebrow">HIGH-THROUGHPUT EVALUATION</p>
+              <h2>Batch Image Processing</h2>
+              <p class="modal-sub">Select or drag multiple images (up to 30) for instant parallel classification and platform recognition.</p>
+            </div>
+            <button id="batch-modal-close" class="close-btn" type="button">&times;</button>
+          </div>
+
+          <div class="batch-upload-box" id="batch-drop-zone">
+            <input id="batch-file-input" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden />
+            <div style="font-size: 2rem; margin-bottom: 8px;">📦</div>
+            <strong>Select or Drop Multiple Images (up to 30)</strong>
+            <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 4px;">JPG, PNG, WebP supported &middot; High-Speed Neural Evaluation</p>
+            <button id="batch-select-btn" type="button" class="primary-btn" style="margin-top: 12px;">Choose Batch Images</button>
+          </div>
+
+          <div id="batch-progress-section" class="batch-progress-section hidden">
+            <div class="batch-status-row">
+              <span id="batch-status-text">Processing batch...</span>
+              <span id="batch-count-text">0 / 0</span>
+            </div>
+            <div class="batch-progress-bar-bg">
+              <div id="batch-progress-bar-fill" class="batch-progress-bar-fill"></div>
+            </div>
+          </div>
+
+          <div id="batch-results-container" class="batch-results-container hidden">
+            <div class="batch-results-header">
+              <h3>Batch Results (<span id="batch-total-done">0</span>)</h3>
+              <button id="batch-export-csv" class="ghost-btn" type="button" style="font-size: 0.76rem; padding: 4px 10px;">📥 Export CSV</button>
+            </div>
+            <div class="table-container" style="max-height: 340px; overflow-y: auto;">
+              <table class="metrics-table" id="batch-results-table">
+                <thead>
+                  <tr>
+                    <th>File</th>
+                    <th>Category</th>
+                    <th>Confidence</th>
+                    <th>Identified Platform</th>
+                    <th>Origin</th>
+                  </tr>
+                </thead>
+                <tbody id="batch-results-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <p>ASTRA VISION 5.0 &middot; Self-Learning AI Object Recognition</p>
+      </footer>
+    </main>
+
+    <script src="/static/app.js?v=5.0.3"></script>
+  </body>
+</html>
