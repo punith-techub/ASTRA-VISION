@@ -161,7 +161,7 @@ Here is what we are building next to take ASTRA VISION even further:
 
 ```text
 AI Tools Used:
-- ChatGPT, Claude, GitHub Copilot, Antigravity / Gemini
+- Antigravity, Codex
 
 Used For:
 - Code suggestions, API structure, debugging, and documentation cleanup.
